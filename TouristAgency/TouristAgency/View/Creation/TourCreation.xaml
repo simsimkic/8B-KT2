@@ -1,0 +1,159 @@
+﻿<Window x:Class="TouristAgency.View.Creation.TourCreation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:TouristAgency.View.Creation"
+        mc:Ignorable="d"
+        Title="TourCreation" Height="750" Width="410" WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <ControlTemplate x:Key="ValidationTemplate">
+            <Grid>
+                <AdornedElementPlaceholder/>
+                <TextBlock Text="{Binding [0].ErrorContent}" Foreground="Red"
+                           VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="7"/>
+            </Grid>
+        </ControlTemplate>
+    </Window.Resources>
+
+
+    <Grid>
+        <StackPanel>
+            <Grid Margin="0,30,0,0" Width="300">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="35"></RowDefinition>
+                </Grid.RowDefinitions>
+
+
+                <Label VerticalAlignment="Center">Tour name:</Label>
+                <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" Height="25" Text="{Binding Path=NewTour.Name, ValidatesOnDataErrors=True}" Validation.ErrorTemplate="{StaticResource ValidationTemplate}"></TextBox>
+
+                <Label Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">Country:</Label>
+                <TextBox x:Name="CountryTextBox" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" Height="25" Text="{Binding Path=NewLocation.Country, ValidatesOnDataErrors=True}"  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"/>
+
+                <Label Grid.Column="2" Grid.Row="1" VerticalAlignment="Center">City:</Label>
+                <TextBox x:Name="CityTextBox"  Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="1" Height="25" Text="{Binding Path=NewLocation.City, ValidatesOnDataErrors=True}"  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"/>
+
+                <Label Grid.Column="0" Grid.Row="2" VerticalAlignment="Center">Tour description:</Label>
+                <TextBox x:Name="DescriptionTextBox"  Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Height="73" Text="{Binding Path=NewTour.Description, ValidatesOnDataErrors=True}"  Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+                    <TextBox.TextWrapping>Wrap</TextBox.TextWrapping>
+                    <TextBox.AcceptsReturn>True</TextBox.AcceptsReturn>
+                    <TextBox.HorizontalScrollBarVisibility>Disabled</TextBox.HorizontalScrollBarVisibility>
+                    <TextBox.VerticalScrollBarVisibility>Auto</TextBox.VerticalScrollBarVisibility>
+
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding LoadCheckpointsIntoListViewCmd}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
+
+                <Label Grid.Column="0" Grid.Row="3" VerticalAlignment="Center">Language:</Label>
+                <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Height="25" Text="{Binding Path=NewTour.Language, ValidatesOnDataErrors=True}"  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"></TextBox>
+
+                <Label Grid.Column="0" Grid.Row="4" VerticalAlignment="Center">Max capacity:</Label>
+                <xctk:IntegerUpDown Grid.Column="1" Grid.Row="4" Height="25" Width="40" HorizontalAlignment="Left" Text="{Binding Path=NewTour.MaxAttendants, ValidatesOnDataErrors=True}"  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"></xctk:IntegerUpDown>
+
+            </Grid>
+
+            <Grid Width="300" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="33"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Label>Available checkpoints:</Label>
+                <Label Grid.Column="2">Selected checkpoints:</Label>
+
+                <ListView x:Name="AvailableListView"  Grid.Column="0" Grid.Row="1" Height="126" ItemsSource="{Binding AvailableCheckpoints}" SelectionMode="Multiple">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding AttractionName}"></Label>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+
+                <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button x:Name="RightButton"  Height="30" Width="30"  Margin="0,-10,0,0" Command="{Binding AddCheckpointCmd}">
+                        right
+                    </Button>
+                    <Button x:Name="LeftButton"  Height="30" Width="30" Margin="0,10,0,0" Command="{Binding RemoveCheckpointCmd}">left</Button>
+                </StackPanel>
+
+                <ListView x:Name="SelectedListView" Grid.Column="2" Grid.Row="1" Height="126" ItemsSource="{Binding SelectedCheckpoints}" SelectionMode="Multiple">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding AttractionName}"></Label>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+            <Grid Width="300" Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="85"></RowDefinition>
+                    <RowDefinition Height="85"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Label>Tour start date:</Label>
+                <StackPanel Grid.Row ="0" Grid.Column="1" Orientation="Horizontal">
+                    <xctk:DateTimePicker x:Name="dateTimePicker"  Height="25" Value="{Binding Path=NewTour.StartDateTime, ValidatesOnDataErrors=True}" FormatString="MM/dd/yyyy" Width="95"  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"></xctk:DateTimePicker>
+                    <Button x:Name="AddDateButton" Width="20" Height="20" Command="{Binding AddMultipleDatesCmd}">+</Button>
+                    <Button x:Name="RemoveDateButton"  Width="20" Height="20" Command="{Binding RemoveMultipleDatesCmd}">-</Button>
+                    <Label Content="{Binding Path=DateCount}"></Label>
+                </StackPanel>
+
+
+                <Label Grid.Column="0" Grid.Row="1">Duration (hours):</Label>
+                <xctk:IntegerUpDown Grid.Column="1" Grid.Row="1" Width="40" HorizontalAlignment="Left" Height="25" Text="{Binding Path=NewTour.Duration, ValidatesOnDataErrors=True}"  Validation.ErrorTemplate="{StaticResource ValidationTemplate}"></xctk:IntegerUpDown>
+
+                <Label Grid.Column="0" Grid.Row="2">Pictures (URLs):</Label>
+                <TextBox Grid.Column="1" Grid.Row="2" Height="80" Text="{Binding PhotoLinks, ValidatesOnDataErrors=True}"  Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+                    <TextBox.TextWrapping>Wrap</TextBox.TextWrapping>
+                    <TextBox.AcceptsReturn>True</TextBox.AcceptsReturn>
+                    <TextBox.HorizontalScrollBarVisibility>Disabled</TextBox.HorizontalScrollBarVisibility>
+                    <TextBox.VerticalScrollBarVisibility>Auto</TextBox.VerticalScrollBarVisibility>
+                </TextBox>
+
+                <Button x:Name="CreateTourButton" Grid.Column="0" Grid.Row="3" Height="48" Width="121" FontSize="17" Command="{Binding CreateCmd}">Create tour!</Button>
+                <Button Grid.Column="1" Grid.Row="3" Height="48" Width="121" FontSize="17">Cancel</Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>
